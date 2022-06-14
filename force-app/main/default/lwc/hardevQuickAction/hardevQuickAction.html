@@ -1,0 +1,9 @@
+<template>
+    <div>
+        <template if:true={comments}>
+            <template for:each={comments} for:item="comment">
+                <p key={comment.Comment}>{comment.Comment}</p>
+            </template>
+        </template>
+    </div>
+</template>
