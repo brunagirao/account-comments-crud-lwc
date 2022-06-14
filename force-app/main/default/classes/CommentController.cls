@@ -1,11 +1,49 @@
 public with sharing class CommentController {
     public CommentController() {}
 
+    @AuraEnabled
+    public static  ActionResponse.Response saveComments (String accountId, String commentsJSON, List<String> removedComments) {
+        try {
 
-    public static void saveComments (String accountId, String commentList) {
-        //List<CommentVO> commentVOList = (List<CommentVO>)JSON.deserialize(commentList, List<CommentVO>.class);
+            List<AccountComment__c> accountCommentsToDelete = [
+                SELECT Id
+                  FROM AccountComment__c
+                 WHERE Id IN: removedComments
+                 
+            ];
+            delete accountCommentsToDelete;
+
+            List<CommentVO> commentVOList = (List<CommentVO>)JSON.deserialize(commentsJSON, List<CommentVO>.class);
+            List<AccountComment__c> accountCommentList = convertToAccountComment(commentVOList);
+
+            upsert accountCommentList;
+
+             ActionResponse.Response response = new ActionResponse.Response(
+                false, 'Comentários salvos com sucesso', ''
+             );
+
+             return response;
+                
+        } catch (Exception e) {
+            return new ActionResponse.Response(e);
+        }
+        
+        
+    }
+
+    public static List<AccountComment__c> convertToAccountComment(List<CommentVO> commentVOList) {
+        List<AccountComment__c> accountCommentList = new List<AccountComment__c>();
+        
+        for(CommentVO comment : commentVOList) {
+            accountCommentList.add(
+                comment.getAccountComment()
+            );
+        }
+
+        return accountCommentList;
     }
  
+    
     @AuraEnabled
     public static ActionResponse.Response loadComments (String accountId) {
         
@@ -53,6 +91,19 @@ public with sharing class CommentController {
             this.Comment    = checkComment(comment.Comment__c);
             this.AccountId  = comment.Account__c;
             this.Type       = type;
+        }
+
+        public AccountComment__c getAccountComment() {
+            AccountComment__c comment = new AccountComment__c(
+                Comment__c = this.Comment,
+                Account__c = this.AccountId
+            );
+
+            if(this.Type == '_database_') {
+                comment.Id = this.Id;
+            }
+
+            return comment;
         }
 
         public String checkComment(String comment) {
