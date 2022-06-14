@@ -1,6 +1,12 @@
 public with sharing class CommentController {
     public CommentController() {}
 
+
+    public static void saveComments (String accountId, String commentList) {
+        //List<CommentVO> commentVOList = (List<CommentVO>)JSON.deserialize(commentList, List<CommentVO>.class);
+    }
+ 
+    @AuraEnabled
     public static ActionResponse.Response loadComments (String accountId) {
         
         try {
@@ -37,10 +43,10 @@ public with sharing class CommentController {
     }
 
     public class CommentVO {
-        public String Id        {get; set; }
-        public String Comment   {get; set; }
-        public String AccountId {get; set; }
-        public String Type      {get; set; }
+        @AuraEnabled public String Id        {get; set; }
+        @AuraEnabled public String Comment   {get; set; }
+        @AuraEnabled public String AccountId {get; set; }
+        @AuraEnabled public String Type      {get; set; }
 
         public CommentVO(AccountComment__c comment, String type) {
             this.Id         = comment.Id;

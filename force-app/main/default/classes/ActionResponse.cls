@@ -2,9 +2,9 @@ public with sharing class ActionResponse {
     public ActionResponse() {}
 
     public class ToastInfo {
-        public String Title   {get; set;}
-        public String Message {get; set;}
-        public String Type    {get; set;}
+        @AuraEnabled public String Title   {get; set;}
+        @AuraEnabled public String Message {get; set;}
+        @AuraEnabled public String Type    {get; set;}
 
         public ToastInfo(String title, String message, String type) {
             this.Title   = title;  
@@ -15,11 +15,11 @@ public with sharing class ActionResponse {
 
     public class Response {
 
-        public Boolean HasError      {get; set;}
-        public Boolean BusinessError {get; set;}
-        public String Message        {get; set;}
-        public String ResponseJSON   {get; set;}
-        public ToastInfo ToastInfo   {get; set;}
+        @AuraEnabled public Boolean HasError      {get; set;}
+        @AuraEnabled public Boolean BusinessError {get; set;}
+        @AuraEnabled public String Message        {get; set;}
+        @AuraEnabled public String ResponseJSON   {get; set;}
+        @AuraEnabled public ToastInfo ToastInfo   {get; set;}
 
         public Response (Boolean businessError, String message, String responseJSON) {
             this.HasError       = businessError;
