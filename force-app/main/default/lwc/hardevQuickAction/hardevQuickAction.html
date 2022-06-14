@@ -1,8 +1,16 @@
 <template>
+    <lightning-button variant="brand" label="Add" title="Add Comments" onclick={addNewComment} class="slds-m-left_x-small">
+    </lightning-button>
+    <lightning-button variant="brand" label="Debug" title="Debug Comments" onclick={debugComments}
+        class="slds-m-left_x-small">
+    </lightning-button>
     <div>
         <template if:true={comments}>
             <template for:each={comments} for:item="comment">
-                <p key={comment.Comment}>{comment.Comment}</p>
+                <div key={comment.Id}>
+                    <lightning-input data-comment-id={comment.Id} type="text" value={comment.Comment} oncommit={changeComment}></lightning-input>
+                    <lightning-button data-comment-id={comment.Id} variant="destructive" label="Delete" title="Destructive action" onclick={removeComment} class="slds-m-left_x-small"></lightning-button>
+                </div>
             </template>
         </template>
     </div>
