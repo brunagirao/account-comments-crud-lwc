@@ -1,6 +1,9 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
 import { deleteRecord } from 'lightning/uiRecordApi';
+import { createRecord } from 'lightning/uiRecordApi';
+import { updateRecord } from 'lightning/uiRecordApi';
 
 import loadComments from '@salesforce/apex/CommentController.loadComments';
 import saveComments from '@salesforce/apex/CommentController.saveComments';
@@ -41,6 +44,28 @@ export default class HardevQuickAction extends LightningElement {
         this.countId++;
     }
 
+    async addNewCommentAPI() {
+
+        let record = {
+            apiName: "AccountComment__c",
+            fields : {
+                Comment__c  : 'Substituir comentário',
+                Account__c  : this.recordId
+            }
+        }
+
+        let response = await createRecord(record);
+        console.log(JSON.stringify(response));
+
+        this.comments.push({
+            Comment     : record.fields.Comment__c,
+            AccountId   : record.fields.Account__c,
+            Type        : '_database_',
+            Id          : response.Id,
+        });
+
+    }
+
     removeComment(element) {
         let commentId = element.currentTarget.dataset.commentId;
         let selectComment = this.comments.find(item => item.Id == commentId);
@@ -77,6 +102,22 @@ export default class HardevQuickAction extends LightningElement {
         let commentId           = element.currentTarget.dataset.commentId;
         let selectComment       = this.comments.find(item => item.Id == commentId);
         selectComment.Comment   = element.target.value;
+    }
+
+    async updateCommentAPI(element) {
+        let commentId           = element.currentTarget.dataset.commentId;
+        let selectComment       = this.comments.find(item => item.Id == commentId);
+        selectComment.Comment = element.target.value;
+        
+        let record = {
+            fields: {
+               Id          : commentId,
+               Comment__c  : selectComment.Comment
+            }
+        }
+
+        let response = await updateRecord(record);
+        console.log(JSON.stringify(response));
     }
 
     async saveAccountComments() {
